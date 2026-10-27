@@ -1,20 +1,22 @@
-# butterflyengine.app
+# butterflyengine.app — Story Factory site
 
 The public marketing website for **Butterfly Story Factory** — a local-first
 Windows studio that turns one topic into a scripted, narrated, subtitled 1080p
 documentary plus vertical Reels.
 
-Live site: **https://butterflyengine.app/**
+Live path (after deployment): **https://butterflyengine.app/story-factory/**
 
-This repository contains **only the website**. The product source code,
-installer build scripts and customer licenses live in a separate private
-repository and are not published here.
+The apex domain **https://butterflyengine.app/** keeps serving the existing
+Butterfly Engine brand site. This repository contains **only the Story Factory
+website**; the product source code, installer build scripts and customer
+licenses live in a separate private repository.
 
 ## Stack
 
-- Static HTML, CSS and a small amount of vanilla JavaScript
+- Static HTML, CSS and vanilla JavaScript
 - No build step, no framework, no tracking
-- Hosted on GitHub Pages from the repository root
+- GitHub Pages project site, proxied under `/story-factory/` by a Cloudflare
+  Worker
 
 ## Structure
 
@@ -22,7 +24,6 @@ repository and are not published here.
 /
 ├── index.html              # landing page (EN by default, TR toggle)
 ├── 404.html
-├── CNAME                   # butterflyengine.app
 ├── .nojekyll
 ├── robots.txt
 ├── sitemap.xml
@@ -31,6 +32,8 @@ repository and are not published here.
 │   ├── eula.html
 │   ├── privacy.html
 │   └── third-party.html
+├── cloudflare/
+│   └── story-factory-worker.js
 ├── assets/
 │   ├── style.css
 │   ├── site.js             # EN/TR copy + interactions
@@ -52,43 +55,58 @@ python -m http.server 8080
 # open http://127.0.0.1:8080/
 ```
 
-## Deploying with GitHub Pages
+The page also supports `?lang=tr` and the EN/TR switch.
+
+## Deployment: GitHub Pages + Cloudflare Worker
+
+The apex domain is currently served by the existing Butterfly Engine site. Do
+not change its DNS records. We add only the `/story-factory/` path.
+
+### 1. Enable GitHub Pages (project site)
 
 1. Repository **Settings → Pages**.
 2. Source: **Deploy from a branch**.
 3. Branch: `main`, folder: `/ (root)`.
-4. Custom domain: `butterflyengine.app`.
-5. Enable **Enforce HTTPS** after DNS verification.
-6. `CNAME` must stay in the repository root.
+4. Do **not** set a custom domain in this repository (there is no `CNAME`).
+5. Wait for `https://kad1rss.github.io/butterflyengine.app/` to load.
 
-### DNS records
+### 2. Add the Cloudflare Worker route
 
-Apex `butterflyengine.app` (A records):
+In the Cloudflare dashboard for `butterflyengine.app`:
 
-```text
-185.199.108.153
-185.199.109.153
-185.199.110.153
-185.199.111.153
-```
+1. **Workers & Pages → Create → Worker**.
+2. Paste `cloudflare/story-factory-worker.js` into the editor and deploy.
+3. Add a route: `butterflyengine.app/story-factory/*` → this Worker.
+4. Keep the apex site route (`butterflyengine.app/*` → existing Lovable site)
+   untouched. Cloudflare evaluates the more specific route first.
 
-Apex AAAA records:
+The Worker rewrites:
 
 ```text
-2606:50c0:8000::153
-2606:50c0:8001::153
-2606:50c0:8002::153
-2606:50c0:8003::153
+https://butterflyengine.app/story-factory/assets/style.css
+        ↓
+https://kad1rss.github.io/butterflyengine.app/assets/style.css
 ```
 
-`www`:
+It also redirects `/story-factory` to `/story-factory/` and serves the custom
+404 page.
+
+### 3. Link it from the main site
+
+Add a “Story Factory” button/link in the existing Butterfly Engine site to
+`/story-factory/`. No DNS change is required.
+
+## SEO
+
+Canonical and social URLs already point to:
 
 ```text
-CNAME  www  →  Kad1Rss.github.io
+https://butterflyengine.app/story-factory/
 ```
 
-If you use Cloudflare, keep the records **DNS only** (grey cloud) until GitHub
-issues the certificate, then optionally enable the proxy.
+If you later move the site to a subdomain (for example
+`storyfactory.butterflyengine.app`), update the canonical, Open Graph,
+`sitemap.xml` and Worker upstream at the same time.
 
 ## Editing copy
 
@@ -112,7 +130,7 @@ Replace these files with optimized versions:
 - Do **not** add the product source code, API keys, `.env` files or customer
   data to this repository.
 - The installer and source ZIP are **not** distributed from this public repo.
-  Sales go through the checkout/contact link on the landing page.
+  Sales go through the contact/checkout link on the landing page.
 - Keep the legal pages in sync with the product license and privacy policy.
 
 ## License

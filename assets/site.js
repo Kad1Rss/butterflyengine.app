@@ -124,6 +124,7 @@ const I18N = {
     footer_privacy: "Privacy",
     footer_third_party: "Third-party notices",
     footer_github: "GitHub",
+    footer_engine: "Butterfly Engine ↗",
     footer_rights: "All rights reserved.",
     footer_note: "Butterfly Story Factory is proprietary software. Provider quotas and terms are your responsibility."
   },
@@ -249,6 +250,7 @@ const I18N = {
     footer_privacy: "Gizlilik",
     footer_third_party: "Üçüncü taraf bildirimleri",
     footer_github: "GitHub",
+    footer_engine: "Butterfly Engine ↗",
     footer_rights: "Tüm hakları saklıdır.",
     footer_note: "Butterfly Story Factory tescilli bir yazılımdır. Sağlayıcı kotaları ve koşulları sizin sorumluluğunuzdadır."
   }

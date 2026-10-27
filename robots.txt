@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://butterflyengine.app/sitemap.xml
+Sitemap: https://butterflyengine.app/story-factory/sitemap.xml
